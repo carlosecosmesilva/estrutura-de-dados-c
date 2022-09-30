@@ -1,3 +1,5 @@
-### Aprendizado de aula 
+## Aprendizado de aula e exercícios 
 
-### São apenas exemplos de Estrutura de Dados
+### Exemplos de aulas de Estrutura de Dados
+
+### Lista de Exercícios
