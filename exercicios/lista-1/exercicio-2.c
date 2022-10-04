@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct lista
-{
-    int info;
-    TLista *prox;
-} TLista;
-
 typedef struct fila
 {
-    TLista *inicio;
-    TLista *fim;
+    int info;
+    TPilha *prox;
 } TFila;
+
+typedef struct pilha
+{
+    TFila *inicio;
+    TFila *fim;
+} TPilha;
