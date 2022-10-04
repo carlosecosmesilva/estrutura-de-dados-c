@@ -51,6 +51,24 @@ char pop(TPilha *novo)
     return novo->sPalavra[novo->topo--];
 }
 
+void removerCaracter(char *vPalavra, char charARemover)
+{
+    int i, j;
+    int len = strlen(vPalavra);
+    for (i = 0; i < len; i++)
+    {
+        if (vPalavra[i] == charARemover)
+        {
+            for (j = i; j < len; j++)
+            {
+                vPalavra[j] = vPalavra[j + 1];
+            }
+            len--;
+            i--;
+        }
+    }
+}
+
 void inverterPalavra(char vPalavra[])
 {
     int n = strlen(vPalavra);
