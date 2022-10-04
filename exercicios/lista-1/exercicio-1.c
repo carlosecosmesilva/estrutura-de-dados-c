@@ -1,156 +1,147 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define filaVazia 0xdeadbeef
-#define MAX 128
+typedef struct lista
+{
+    int info;
+    struct lista *prox;
+} TLista;
 
 typedef struct fila
 {
-    int *pInfo;
-    int ant, prox, cont, max;
+    TLista *inicio;
+    TLista *fim;
 } TFila;
 
-int verificarFilaVazia(TFila *f)
+TFila *cria_fila(void)
 {
-    return contarNaFila(f);
+    TFila *fila = (TFila *)malloc(sizeof(TFila));
+    fila->inicio = NULL;
+    fila->fim = NULL; // cria filas
+    return fila;
 }
 
-int contarNaFila(TFila *f)
+int fila_vazia(TFila *fila)
 {
-    return f->cont;
-}
-
-int retornarFilaVazia(TFila *f)
-{
-    return (f->cont == 0);
-}
-
-int inserirNaFila(TFila *f, int v)
-{
-    if (f->cont == f->max)
+    if (fila->inicio == NULL)
     {
-        return;
+        return 1;
     }
-    f->pInfo = (f->ant + 1) % f->max;
-    f->ant[f->pInfo] = f;
-    f->cont++;
+    else
+        return 0;
 }
 
-int removerDaFila(TFila *f)
+void imprime_fila(TFila *fila)
 {
-    int auxRemocao;
+    TLista *p;
+    printf("\n----------------------------------");
 
-    if (f->cont == 0)
+    for (p = fila->inicio; p != NULL; p = p->prox)
     {
-        return filaVazia;
+        printf("\n%d", p->info);
     }
-
-    f->prox = (f->prox + 1) % f->max;
-    auxRemocao = f->pInfo[f->prox];
-    f->cont--;
-
-    return filaVazia;
+    printf("\n----------------------------------");
 }
 
-void imprimirFila(TFila *f)
-{
-    int i = (f->prox + 1) % f->max, elemento = contarNaFila(f);
-
-    while (elemento--)
+void pushf(TFila *f1, int elem)
+{ // insere novo elemento na fila
+    TLista *novo = (TLista *)malloc(sizeof(TLista));
+    novo->info = elem;
+    novo->prox = NULL;
+    if (!fila_vazia(f1))
     {
-        printf("[%d], ", f->pInfo[i]);
-        i = (i >= f->max) ? 0 : (i + 1);
+        f1->fim->prox = novo;
     }
-}
-
-void push(TFila *f, int v)
-{
-    inserirNaFila(f, v);
-}
-
-int pop(TFila *f)
-{
-    int i, n = contarNaFila(f);
-    int elementoRemovido;
-
-    for (i = 0; i < (n - 1); i++)
+    else
     {
-        elementoRemovido = removerDaFila(f);
-        inserirNaFila(f, elementoRemovido);
+        f1->inicio = novo;
     }
-    elementoRemovido = removerDaFila(f);
-
-    return elementoRemovido;
+    f1->fim = novo;
 }
 
-TFila *alocarNaFila(int n)
-{
-    TFila *pFila;
-    pFila = malloc(sizeof(TFila));
+int peekf(TFila *f1)
+{ // retorna ultimo da fila equivalente ao topo
+    return f1->fim->info;
+}
 
-    if (pFila == NULL)
+void insere(TLista *p, TFila *f2)
+{
+    if (!fila_vazia(f2))
     {
-        return NULL;
+        f2->fim->prox = p;
+        p->prox = NULL;
     }
-    pFila->max = n;
-
-    pFila->pInfo = malloc(sizeof(int) * n);
-    pFila->ant = n - 1;
-    pFila->prox = n - 1;
-
-    return pFila;
+    else
+    {
+        p->prox = NULL;
+        f2->inicio = p;
+    }
+    f2->fim = p;
+    p->prox = NULL;
 }
 
-int main(void)
+int popf(TFila *f1, TFila *f2)
 {
-    TFila *f;
-    int x, select;
-    f = queue_allocate(MAX);
-
-    do
+    TFila *aux;
+    TLista *p, *c = NULL;
+    int resp;
+    if (fila_vazia(f1))
     {
-        printf("\n[1] Push\n[2] Pop\n[0] Exit");
-        printf("\nEscolha: ");
-        scanf(" %d", &select);
-
-        switch (select)
+        printf("\nElemento nao encontrado");
+        return 0;
+    }
+    else
+    {
+        for (p = f1->inicio; p != NULL; p = p->prox)
         {
-        case 1:
-            printf("\nEntre com o valor de Push:");
-            scanf(" %d", &x);
-            stack_push(f, x);
-
-            printf("\n\n__________________________\nFila Atual:\n");
-
-            queue_display(f);
-            printf("\n\nPushed Value: %d", x);
-
-            printf("\n__________________________\n");
-            break;
-
-        case 2:
-            x = stack_pop(f);
-
-            printf("\n\n\n\n__________________________\nFila Atual:\n");
-
-            queue_display(f);
-            if (x == filaVazia)
-                printf("\n\nNenhum valor removido");
-            else
-                printf("\n\nPopped Value: %d", x);
-
-            printf("\n__________________________\n");
-            break;
-
-        case 0:
-            printf("\nSaída.\n");
-            return 0;
-
-        default:
-            printf("\nSaída.\n");
-            return 0;
+            if (p->prox == NULL)
+            { // se ultimo elemento, libera elemento
+                resp = p->info;
+                free(p);
+                f1->inicio = NULL; // faz f1 apontar pra null e ficar vazia
+                f1->fim = NULL;
+                insere(c, f2); // insere elementos de f1 em f2
+                break;
+            }
+            if (c != NULL)
+            {
+                insere(c, f2);
+            }
+            c = p; // acompanha p sempre um elemento atras
         }
-    } while (1);
+    }
 
-    return 0;
+    // repassa f2 para f1
+
+    f1->inicio = f2->inicio;
+    f1->fim = f2->fim;
+    f2->inicio = NULL;
+    f2->fim = NULL;
+    return resp;
+}
+
+int main()
+{
+    TFila *f1, *f2;
+    int resp;
+
+    f1 = cria_fila();
+    f2 = cria_fila();
+
+    pushf(f1, 10);
+    pushf(f1, 20);
+    pushf(f1, 30);
+    pushf(f1, 40);
+    pushf(f1, 50);
+
+    imprime_fila(f1);
+    imprime_fila(f2);
+
+    printf("\nTopo: %d", peekf(f1));
+
+    resp = popf(f1, f2);
+
+    printf("\nExcluido: %d", resp);
+
+    imprime_fila(f1);
 }

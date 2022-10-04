@@ -1,12 +1,12 @@
 #include "aula-2-1.h"
 
-typedef struct fila
+typedef struct pilha
 {
     TLista *inicio;
     TLista *fim;
-} TFila;
+} TPilha;
 
-void insere(TFila *f, int elem)
+void insere(TPilha *f, int elem)
 {
     TLista *novo = (TLista *)malloc(sizeof(TLista));
     novo->info = elem;
@@ -21,7 +21,7 @@ void insere(TFila *f, int elem)
     }
     f->fim = novo; // elt. novo é o novo fim da fila
 }
-int fila_vazia(TFila *f)
+int fila_vazia(TPilha *f)
 {
     if (f->inicio == NULL)
     {
@@ -30,7 +30,7 @@ int fila_vazia(TFila *f)
     else
         return 0;
 }
-int retira(TFila *f)
+int retira(TPilha *f)
 {
     if (fila_vazia(f))
     {
