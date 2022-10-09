@@ -38,7 +38,7 @@ int verificarSePilhaVazia(TPilha *pilha)
 }
 
 // Adiciona o nó ao topo da pilha
-void push(TPilha *pilha, int info)
+void push(TPilha *pilha, int i)
 {
 
     // Cria um novo nó
@@ -50,7 +50,7 @@ void push(TPilha *pilha, int info)
     }
     else
     {
-        no->info = info;
+        no->info = i;
         no->prox = pilha->topo;
     }
 
