@@ -1,6 +1,6 @@
 // Implementação com listas encadeadas
 
-#include "aula-2-1.h"
+#include "E:\GitHub\estrutura-de-dados-c\aulas\pilhas\Lista.c"
 #include <limits.h>
 
 typedef struct pilha
@@ -25,25 +25,32 @@ void push(TPilha *pilha, int elem)
 
 int pop(TPilha *pilha)
 {
-    if (pilha_vazia(*pilha))
-    {
-        return -1;
-    }
-    return pilha->topo[pilha->topo--];
+    TLista *p;
+    int removido;
+    removido = pilha->topo->info;
+    p = pilha->topo;
+    pilha->topo = pilha->topo->prox;
+
+    free(p);
+    return removido;
 }
 
 int peek(TPilha *pilha)
 {
-    if (pilha_vazia(*pilha))
-    {
-        return -1;
-    }
-    return pilha->topo[pilha->topo];
+    int elem;
+    elem = pilha->topo->info;
+    return elem;
+    return 0;
 }
 
-int main()
+int alteraTopo(TPilha *pilha, int novoElem)
+{
+    pilha->topo->info = novoElem;
+    return 0;
+}
+
+void main()
 {
     TPilha *pilha = inicializa();
     push(pilha, 5);
-    return 0;
 }

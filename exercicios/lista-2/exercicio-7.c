@@ -1,0 +1,2 @@
+/* Retornar todos os ancestrais de um nó na árvore de busca binária, da raiz da árvore até o elemento passado como parâmetro, usando a biblioteca de lista encadeada : TLista *ancestrais(TAB *a, int elem); */
+#include "E:\GitHub\estrutura-de-dados-c\exercicios\lista-2\lista-2.c"
