@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Questão 1, uma pilha por meio de duas filas */
+
 typedef struct lista
 {
     int info;
-    struct lista *prox;
+    TLista *prox;
 } TLista;
+
+TLista *criaLista()
+{
+    return NULL;
+}
 
 typedef struct fila
 {
@@ -13,135 +20,70 @@ typedef struct fila
     TLista *fim;
 } TFila;
 
-TFila *cria_fila(void)
+TFila *criafila()
 {
-    TFila *fila = (TFila *)malloc(sizeof(TFila));
-    fila->inicio = NULL;
-    fila->fim = NULL; // cria filas
-    return fila;
+    TFila *novo = (TFila *)malloc(sizeof(TFila));
+    novo->inicio = NULL;
+    novo->fim = NULL;
+    return novo;
 }
 
-int fila_vazia(TFila *fila)
+void insereFila(TFila *f, int i)
 {
-    if (fila->inicio == NULL)
-    {
-        return 1;
-    }
-    else
-        return 0;
-}
-
-void imprime_fila(TFila *fila)
-{
-    TLista *p;
-    printf("\n----------------------------------");
-
-    for (p = fila->inicio; p != NULL; p = p->prox)
-    {
-        printf("\n%d", p->info);
-    }
-    printf("\n----------------------------------");
-}
-
-void pushf(TFila *f1, int elem)
-{ // insere novo elemento na fila
-    TLista *novo = (TLista *)malloc(sizeof(TLista));
-    novo->info = elem;
-    novo->prox = NULL;
-    if (!fila_vazia(f1))
-    {
-        f1->fim->prox = novo;
-    }
+    TLista *novo = (TFila *)malloc(sizeof(TFila));
+    novo->info = NULL;
+    if (f == NULL)
+        f->inicio = novo;
     else
     {
-        f1->inicio = novo;
+        f->fim->prox = novo;
     }
-    f1->fim = novo;
+    f->fim = novo;
 }
 
-int peekf(TFila *f1)
-{ // retorna ultimo da fila equivalente ao topo
-    return f1->fim->info;
-}
-
-void insere(TLista *p, TFila *f2)
+int retira(TFila *f)
 {
-    if (!fila_vazia(f2))
+    if (f == NULL)
+        exit(1);
+    int info;
+    TLista *aux = (TLista *)malloc(sizeof(TLista));
+    info = f->inicio->info;
+    aux = f->inicio;
+    f->inicio = f->inicio->prox;
+    if (f->inicio == NULL)
+        f->fim = NULL;
+    free(aux);
+    return info;
+}
+
+void pegaTopo(TFila *f)
+{
+    int resultado;
+    if (f->fim == f->inicio)
     {
-        f2->fim->prox = p;
-        p->prox = NULL;
+        resultado = retira(f);
     }
     else
     {
-        p->prox = NULL;
-        f2->inicio = p;
-    }
-    f2->fim = p;
-    p->prox = NULL;
-}
-
-int popf(TFila *f1, TFila *f2)
-{
-    TFila *aux;
-    TLista *p, *c = NULL;
-    int resp;
-    if (fila_vazia(f1))
-    {
-        printf("\nElemento nao encontrado");
-        return 0;
-    }
-    else
-    {
-        for (p = f1->inicio; p != NULL; p = p->prox)
+        TFila *filaAux = (TFila *)malloc(sizeof(TFila));
+        while (f->inicio->prox != NULL)
         {
-            if (p->prox == NULL)
-            { // se ultimo elemento, libera elemento
-                resp = p->info;
-                free(p);
-                f1->inicio = NULL; // faz f1 apontar pra null e ficar vazia
-                f1->fim = NULL;
-                insere(c, f2); // insere elementos de f1 em f2
-                break;
-            }
-            if (c != NULL)
-            {
-                insere(c, f2);
-            }
-            c = p; // acompanha p sempre um elemento atras
+            insereFila(filaAux, retira(f));
+        }
+        resultado = retira(f);
+        while (filaAux->inicio != NULL)
+        {
+            insereFila(f, retira(filaAux));
         }
     }
-
-    // repassa f2 para f1
-
-    f1->inicio = f2->inicio;
-    f1->fim = f2->fim;
-    f2->inicio = NULL;
-    f2->fim = NULL;
-    return resp;
+    printf("%d\n", resultado);
 }
 
-int main()
+void main()
 {
-    TFila *f1, *f2;
-    int resp;
-
-    f1 = cria_fila();
-    f2 = cria_fila();
-
-    pushf(f1, 10);
-    pushf(f1, 20);
-    pushf(f1, 30);
-    pushf(f1, 40);
-    pushf(f1, 50);
-
-    imprime_fila(f1);
-    imprime_fila(f2);
-
-    printf("\nTopo: %d", peekf(f1));
-
-    resp = popf(f1, f2);
-
-    printf("\nExcluido: %d", resp);
-
-    imprime_fila(f1);
+    TFila *f = criafila();
+    insereFila(f, 1);
+    insereFila(f, 2);
+    insereFila(f, 3);
+    pegaTopo(f);
 }
