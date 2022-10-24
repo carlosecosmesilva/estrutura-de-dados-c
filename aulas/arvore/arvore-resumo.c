@@ -132,3 +132,19 @@ TAB *espelho(TAB *a)
     }
     return NULL;
 }
+
+int verifica_AVL(TAB * raiz){
+    if(raiz != NULL){
+        verifica_AVL(raiz->esq);
+        verifica_AVL(raiz->dir);
+        int esq = altura(raiz->esq);
+        int dir = altura(raiz->dir);
+        int fb = dir - esq;
+        if(fb < -1 || fb > 1){
+            exit(0);
+        } 
+        else {
+            return 1;
+        }
+    }
+}
