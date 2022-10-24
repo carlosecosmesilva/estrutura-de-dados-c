@@ -59,7 +59,7 @@ int min(TPilha *p) {
     
     while (p->topo)
     {
-        if (p->topo < min)
+        if (p->topo < auxMin)
         {
             auxMin = p->topo;
         }

@@ -1,50 +1,107 @@
-#include "aula-2-1.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-typedef struct pilha
+typedef struct lista
+{
+    int info;
+    struct lista *prox;
+} TLista;
+
+typedef struct fila
 {
     TLista *inicio;
     TLista *fim;
-} TPilha;
+} TFila;
 
-void insere(TPilha *f, int elem)
+TFila *cria_fila()
 {
-    TLista *novo = (TLista *)malloc(sizeof(TLista));
-    novo->info = elem;
-    novo->prox = NULL; // inserção no fim da fila
-    if (!fila_vazia(f))
-    {
-        f->fim->prox = novo;
-    }
-    else
-    {
-        f->inicio = novo;
-    }
-    f->fim = novo; // elt. novo é o novo fim da fila
+    TFila *fila = (TFila *)malloc(sizeof(TFila));
+    fila->inicio = NULL;
+    fila->fim = NULL;
+    return fila;
 }
-int fila_vazia(TPilha *f)
+
+int fila_vazia(TFila *fila)
 {
-    if (f->inicio == NULL)
+    if (fila->inicio == NULL)
     {
         return 1;
     }
     else
         return 0;
 }
-int retira(TPilha *f)
+
+void insere(TFila *fila, int elem)
 {
-    if (fila_vazia(f))
+    TLista *novo = (TLista *)malloc(sizeof(TLista)); // inserção sempre no fim
+    novo->info = elem;
+    novo->prox = NULL;
+    if (!fila_vazia(fila))
+    {
+        fila->fim->prox = novo;
+    }
+    else
+    {
+        fila->inicio = novo;
+    }
+    fila->fim = novo;
+}
+
+int retira(TFila *fila)
+{
+    if (fila_vazia(fila))
     {
         exit(1);
     }
-    int info = f->inicio->info;
-    TLista *aux = f->inicio;
-    f->inicio = f->inicio->prox;
-    // se elemento removido era o único da fila
-    // faz fim apontar para NULL também
-    if (f->inicio == NULL)
+    int info = fila->inicio->info; // remoção sempre no inicio
+
+    TLista *aux = fila->inicio;
+    fila->inicio = fila->inicio->prox;
+    if (fila->inicio == NULL)
     {
-        f->fim = NULL;
+        fila->fim = NULL;
     }
     free(aux);
     return info;
+}
+
+void altera_inicio(TFila *fila, int elem)
+{
+    fila->inicio->info = elem;
+}
+
+void imprime_fila(TFila *fila)
+{
+    TLista *p;
+    printf("----------------------------------\n");
+
+    for (p = fila->inicio; p != NULL; p = p->prox)
+    {
+        printf("%d\n", p->info);
+    }
+    printf("----------------------------------\n");
+}
+
+int main()
+{
+    TFila *fila = cria_fila();
+    int a;
+
+    insere(fila, 10);
+    insere(fila, 20);
+    insere(fila, 30);
+    insere(fila, 40);
+
+    imprime_fila(fila);
+
+    a = retira(fila);
+
+    imprime_fila(fila);
+
+    altera_inicio(fila, 400);
+
+    imprime_fila(fila);
+    printf("Retirado: %d", a);
+
+    return 0;
 }
