@@ -28,7 +28,9 @@ int fila_vazia(TFila *fila)
         return 1;
     }
     else
+    {
         return 0;
+    }
 }
 
 void insere(TFila *fila, int elem)

@@ -47,14 +47,12 @@ TLista *inserirFim(TLista *li, int i)
         }
         p->prox = novo;
     }
-
     return li;
 }
 
 TLista *inserirOrdenado(TLista *li, int i)
 {
-    TLista *novo;
-    novo = (TLista *)malloc(sizeof(TLista));
+    TLista *novo = (TLista *)malloc(sizeof(TLista));
     novo->info = i;
     TLista *p = li; /* ponteiro para percorrer a lista */
     if (p == NULL)  /* lista vazia -- insere no inicio */
@@ -126,7 +124,6 @@ TLista *inserirOrdenadoRecursivo(TLista *li, int i)
             }
             else
             {
-
                 li->prox = novo;
             }
         }
@@ -142,7 +139,6 @@ TLista *inserirOrdenadoRecursivo(TLista *li, int i)
         }
         else
         {
-
             li->prox = insere_ordenado_recursivo(li->prox, i);
         }
     }
@@ -152,7 +148,7 @@ TLista *inserirOrdenadoRecursivo(TLista *li, int i)
 TLista *excluirLista(TLista *li, int i)
 {
     TLista *ant = NULL; /* ponteiro para elemento anterior */
-    TLista *p = li;      /* ponteiro para percorrer a lista*/
+    TLista *p = li;     /* ponteiro para percorrer a lista*/
     /* procura elemento na lista, guardando anterior */
     while (p != NULL && p->info != i)
     {
@@ -182,7 +178,21 @@ TLista *excluirLista(TLista *li, int i)
 
 TLista *alterarLista(TLista *li, int vantigo, int vnovo)
 {
-    
+    TLista *p;
+    int cont = 0;
+    for (p = li; p != NULL; p = p->prox)
+    {
+        if (p->info == vantigo)
+        {
+            p->info = vnovo;
+            cont = 1; // se valor antigo for achado, cont = 1, caso contrario, usa-se para dizer que nao achou
+        }
+    }
+    if (cont == 0)
+    {
+        printf("Valor a substituir nao encontrado.\n");
+    }
+    return li;
 }
 
 int main()
