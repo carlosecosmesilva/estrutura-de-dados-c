@@ -4,7 +4,7 @@
 typedef struct lista
 {
     int info;
-    struct TLista *prox;
+    TLista *prox;
 } TLista;
 
 TLista *cria_lista()
@@ -194,31 +194,51 @@ TLista *merge(TLista *l1, TLista *l2)
     return nova;
 }
 
-TLista *inverter_mn(TLista *li, int n, int m)
+TLista *insere_fim_lista(TLista *li, TLista *l2)
 {
-    TLista *p;
-    TLista *t;
-    TLista *nova = cria_lista();
+    TLista *p = li;
+    while (p->prox != NULL)
+    {
+        p = p->prox;
+    }
+    p->prox = l2;
 
-    for (p = li; p->prox->info != m; p = p->prox)
+    return li;
+}
+
+TLista *inverter_mn(TLista *l, int n, int m)
+{
+    TLista *p, *p2;
+    TLista *listaInvertida = criaLista();
+    TLista *final = criaLista();
+    for (p = l; p != NULL; p = p->prox)
     {
         if (p->info == n)
         {
-            for (t = p; t->prox->info != m; t = t->prox)
+            for (p2 = p; p2->prox->info != m; p2 = p2->prox)
             {
-                nova = insere_fim(nova, t->prox->info);
+                listaInvertida = insereLista(listaInvertida, p2->prox->info);
             }
+            break;
         }
     }
-    nova = inverterLista(nova);
-    TLista *aux = nova;
-    TLista *j = nova;
-    p->prox = aux;
-    for (j; j->prox != NULL; j = j->prox)
+    for (p = l; p->info == n; p = p->prox)
     {
-        j->prox = t->prox;
+        final = insereFim(final, p->info);
     }
-    return nova;
+    for (p2 = final; p2 != NULL; p2 = p2->prox)
+    {
+        final = insereFim(final, p2->info);
+    }
+    for (p = l; p == m; p = p->prox)
+    {
+        for (p; p != NULL; p = p->prox)
+        {
+            final = insereFim(final, p->prox);
+        }
+    }
+
+    return final;
 }
 
 int main()
