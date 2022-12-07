@@ -280,6 +280,16 @@ int iguais(TG *g1, TG *g2)
 }
 
 //Q5
-int nao_tem_mesma_cor(TG *g) {
+int nao_tem_mesma_cor(TG *g)
+{
+    if (!g || !g->prox_no)
+        return 2;
     
+    int verif = nao_tem_mesma_cor(g->prox_no);
+    if (verif==1)
+        return 1;
+    if (g->cor != g->prox_no->cor)
+        return 1;
+    return 0;
 }
+
