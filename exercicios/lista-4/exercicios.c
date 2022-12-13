@@ -1,330 +1,248 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct vizinho
+typedef struct lista
 {
-    int cor;
-    int noVizinho;
-    TVizinho *proxVizinho;
-} TVizinho;
+    int info;
+    TLista *prox;
+} TLista;
 
-typedef struct grafo
-{
-    int cor;
-    int noGrafo;
-    TGrafo *proxGrafo;
-    TVizinho *primViz;
-} TGrafo;
-
-TGrafo *inicializarGrafo()
+TLista *cria_lista()
 {
     return NULL;
 }
 
-void imprimir(TGrafo *g)
+TLista *insere(TLista *inicio, int info)
 {
-    if (g)
+    TLista *novo = (TLista *)malloc(sizeof(TLista));
+    novo->prox = inicio;
+    novo->info = info;
+    return novo;
+}
+
+TLista insere_fim(TLista *li, int i)
+{
+    TLista *novo = (TLista *)malloc(sizeof(TLista));
+    novo->info = i;
+    novo->prox = NULL;
+    TLista *p = li;
+    if (p == NULL)
     {
-        printf("%d:\n", g->noGrafo);
-        TVizinho *v = g->primViz;
-        while (v)
+        li = novo;
+    }
+    else
+    {
+        while (p->prox != NULL)
         {
-            printf("%d ", v->noVizinho);
-            v = v->proxVizinho;
+            p = p->prox;
         }
-        imprimir(g->proxGrafo);
+        p->prox = novo;
     }
+    return;
 }
 
-void liberarVizinho(TVizinho *v)
+void imprimirLista(TLista *li)
 {
-    if (!v)
-        return;
-    liberarVizinho(v->proxVizinho);
-    free(v);
-}
-
-void liberarGrafo(TGrafo *g)
-{
-    if (g)
-        liberarVizinho(g->primViz);
-    liberarGrafo(g->proxGrafo);
-    free(g);
-}
-
-TGrafo *buscarNo(TGrafo *g, int x)
-{
-    if ((!g) || (g->noGrafo == x))
+    while (li != NULL)
     {
-        return g;
+        printf(" %d ", li->info);
+        li = li->prox;
     }
-    return (buscarNo(g->proxGrafo, x));
 }
 
-TGrafo *buscarAresta(TGrafo *g, int primNo, int segNo)
+TLista *retira(TLista *inicio)
 {
-    TGrafo *p1 = buscarNo(g, primNo);
-    TGrafo *p2 = buscarNo(g, segNo);
+    TLista *aux;
+    aux = inicio;
+    inicio = inicio->prox;
+    free(aux);
+    return inicio;
+}
 
-    if ((!p1) || (!p2))
+TLista *inverterLista(TLista *inicio)
+{
+    int aux;
+    TLista *p;
+    TLista *novaLista = cria_lista();
+
+    for (p = inicio; p != NULL; p->prox)
+    {
+        novaLista = insere(novaLista, p->info);
+    }
+    p = inicio;
+
+    while (p != NULL)
+    {
+        inicio = retira(inicio);
+        p = inicio;
+    }
+
+    return novaLista;
+}
+
+TLista *exclui(TLista *li, int elem)
+{
+    TLista *p;
+    TLista *c;
+
+    if (li->prox == NULL)
     {
         return NULL;
     }
-
-    TVizinho *aresta = p1->primViz;
-
-    while ((aresta) && (aresta->noVizinho != segNo))
+    if (li->info == elem)
     {
-        aresta = aresta->proxVizinho;
-    }
-
-    return aresta;
-}
-
-TGrafo *inserirNo(TGrafo *g, int x)
-{
-    TGrafo *p = buscarNo(g, x);
-    if (!p)
-    {
-        p = (TGrafo *)malloc(sizeof(TGrafo));
-        p->noGrafo = x;
-        p->proxGrafo = g;
-        p->primViz = NULL;
-        g = p;
-    }
-    return g;
-}
-
-void inserirUmSentido(TGrafo *g, int primNo, int segNo)
-{
-    TGrafo *p = buscarNo(g, primNo);
-    if (!p)
-    {
-        return;
-    }
-    TVizinho *novo = (TVizinho *)malloc(sizeof(TVizinho));
-    novo->noVizinho = segNo;
-    novo->proxVizinho = p->primViz;
-    p->primViz = novo;
-}
-
-void inserirAresta(TGrafo *g, int primNo, int segNo)
-{
-    TVizinho *v = buscarAresta(g, primNo, segNo);
-    if (v)
-    {
-        return;
-    }
-    inserirUmSentido(g, primNo, segNo);
-    inserirUmSentido(g, segNo, primNo);
-}
-
-void retirarUmSentido(TGrafo *g, int primNo, int segNo)
-{
-    TGrafo *p = buscarNo(g, primNo);
-    if (!p)
-    {
-        return;
-    }
-    TVizinho *ant = NULL;
-    TVizinho *atual = p->primViz;
-    while ((atual) && (atual->noVizinho != segNo))
-    {
-        ant = atual;
-        atual = atual->proxVizinho;
-    }
-    if (!ant)
-    {
-        p->primViz = atual->proxVizinho;
+        p = li; // cria auxiliar para poder liberar memoria e nao quebrar a lista
+        li = p->prox;
+        printf("Elemento encontrado: %d\n", elem);
+        printf("--------------------------------------------\n");
     }
     else
     {
-        ant->proxVizinho = atual->proxVizinho;
-    }
-    free(atual);
-}
-
-void retirarAresta(TGrafo *g, int primNo, int segNo)
-{
-    TVizinho *v = buscarAresta(g, primNo, segNo);
-    if (!v)
-    {
-        return;
-    }
-    retirarUmSentido(g, primNo, segNo);
-    retirarUmSentido(g, primNo, segNo);
-}
-
-TGrafo *retiraNo(TGrafo *g, int no)
-{
-    TGrafo *p = g;
-    TGrafo *ant = NULL;
-
-    while ((p) && (p->noGrafo != no))
-    {
-        ant = p;
-        p = p->proxGrafo;
-    }
-    if (!p)
-    {
-        return g;
-    }
-    while (p->primViz)
-    {
-        retirarAresta(g, no, p->primViz->noVizinho);
-    }
-    if (!ant)
-    {
-        g = g->proxGrafo;
-    }
-    else
-    {
-        ant->proxGrafo = p->proxGrafo;
+        for (p = li; p != NULL; p = p->prox)
+        {
+            if (p->info == elem)
+            {
+                c->prox = p->prox; // c usado para percorrer a lista sempre um elemento antes de p
+                printf("Elemento encontrado: %d\n", elem);
+                printf("--------------------------------------------\n");
+                break;
+            }
+            c = p;
+        }
     }
     free(p);
-    return g;
+    return li;
 }
 
-int verificarQtdDeNos(TGrafo *g)
+TLista *removerDaLista(TLista *inicio, int remover)
 {
-    if (!g)
+    TLista *p;
+    TLista *nova = cria_lista();
+    for (p = inicio; p != NULL; p = p->prox)
     {
-        return 0;
+        if (p->info != remover)
+        {
+            nova = insere_fim(nova, p->info);
+        }
     }
-    if (g->proxGrafo)
+    p = inicio;
+    while (p != NULL)
     {
-        return 1 + verificarQtdDeNos(g->proxGrafo);
+        inicio = retira(inicio);
+        p = inicio;
     }
-    return 1;
+    return nova;
 }
 
-int verificarQtdDeVertices(TGrafo *g)
+TLista *trocarAnterior(TLista *inicio, int x)
 {
-    if (!g)
+    TLista *p;
+    TLista *ant, *atual, *prox;
+
+    for (p = inicio; p->prox != NULL; p = p->prox)
     {
-        return 0;
-    }
-    int qtdVertices = 0;
-    while (g)
-    {
-        if (g->primViz)
+        ant = p;
+        atual = p->prox;
+        prox = atual->prox;
+        if (atual->info == x)
         {
-            TVizinho *aux = g->primViz;
-            while (aux)
-            {
-                qtdVertices++;
-                aux = aux->proxVizinho;
-            }
+            int aux = ant->info;
+            ant->info = prox->info;
+            prox->info = aux;
         }
-        g = g->proxGrafo;
     }
-    return qtdVertices;
+    return inicio;
 }
 
-int verificarGrauDeNos(TGrafo *g, int x)
+TLista *ordenar(TLista *li)
 {
-    if (!g)
+    TLista *q;
+    TLista *t;
+    for (t = li; t->prox != NULL; t = t->prox)
     {
-        return 0;
-    }
-    while (g)
-    {
-        int qtd = 0;
-        if (g->primViz)
+        for (q = li; q->prox != NULL; q = q->prox)
         {
-            TVizinho *v = g->primViz;
-            while (v)
+            if (q->info > q->prox->info)
             {
-                qtd++;
-                v = v->proxVizinho;
+                int aux = q->info;       // cria um auxiliar para salvar o valor atual do nó.
+                q->info = q->prox->info; // altera valor atual para o prox.
+                q->prox->info = aux;     // coloca a informação do próx como atual.
             }
         }
-        if (qtd != x)
-        {
-            return 0;
-        }
-        g = g->proxGrafo;
     }
-    return 1;
+    return li;
 }
 
-int verificarGrafosIguais(TGrafo *primGraf, TGrafo *segGrafo)
+TLista *merge(TLista *l1, TLista *l2)
 {
-    if (!primGraf && !segGrafo)
+    TLista *nova;
+    TLista *p;
+    nova = l1;
+    for (p = l2; p->prox; p = p->prox)
     {
-        return 1;
+        nova = insere_fim(nova, p->info);
     }
-    else if (primGraf->noGrafo == segGrafo->noGrafo)
-    {
-        TVizinho *primViz = primGraf->primViz;
-        TVizinho *segViz = segGrafo->primViz;
-        while (primViz || segViz)
-        {
-            if (!primViz || segViz)
-            {
-                return 0;
-            }
-            else if (primViz->noVizinho == segViz->noVizinho)
-            {
-                primViz = primViz->proxVizinho;
-                segViz = segViz->proxVizinho;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        if (!primGraf->proxGrafo && !segGrafo->proxGrafo)
-        {
-            return 1;
-        }
-        else
-        {
-            primGraf = primGraf->proxGrafo;
-            segGrafo = segGrafo->proxGrafo;
-        }
-    }
-    else
-    {
-        return 0;
-    }
+    nova = insere_fim(nova, p->info);
+    nova = ordenar(nova);
+    p = l2;
 
-    return 1;
+    while (p != NULL)
+    {
+        l2 = exclui_inicio(l2);
+        p = l2;
+    }
+    return nova;
 }
 
-int verificarSeCorIgual(TGrafo *g)
+TLista *insere_fim_lista(TLista *li, TLista *l2)
 {
-    int resultado = 1;
-    TGrafo *aux = g;
-    while (aux != NULL)
+    TLista *p = li;
+    while (p->prox != NULL)
     {
-        TVizinho *v = aux->primViz;
-        while (v != NULL)
+        p = p->prox;
+    }
+    p->prox = l2;
+
+    return li;
+}
+
+TLista *inverter_mn(TLista *l, int n, int m)
+{
+    TLista *p, *p2;
+    TLista *listaInvertida = criaLista();
+    TLista *final = criaLista();
+    for (p = l; p != NULL; p = p->prox)
+    {
+        if (p->info == n)
         {
-            if (v->cor == aux->cor)
+            for (p2 = p; p2->prox->info != m; p2 = p2->prox)
             {
-                resultado = 0;
+                listaInvertida = insereLista(listaInvertida, p2->prox->info);
             }
-            v->proxVizinho;
+            break;
         }
-        aux = aux->proxGrafo;
+    }
+    for (p = l; p->info == n; p = p->prox)
+    {
+        final = insereFim(final, p->info);
+    }
+    for (p2 = final; p2 != NULL; p2 = p2->prox)
+    {
+        final = insereFim(final, p2->info);
+    }
+    for (p = l; p == m; p = p->prox)
+    {
+        for (p; p != NULL; p = p->prox)
+        {
+            final = insereFim(final, p->prox);
+        }
     }
 
-    return resultado;
+    return final;
 }
 
 int main()
 {
-    TGrafo *grafoTeste = inicializa();
-    grafoTeste = insere_vertice(grafoTeste, 10, 5);
-    grafoTeste = insere_vertice(grafoTeste, 12, 5);
-    grafoTeste = insere_vertice(grafoTeste, 17, 7);
-    grafoTeste = insere_vertice(grafoTeste, 1, 8);
-    insere_aresta(grafoTeste, 10, 12, 5, 5);
 
-    imprime(grafoTeste);
-    int teste = nao_tem_mesma_cor(grafoTeste);
-
-    printf("%d \n", teste);
     return 0;
 }
