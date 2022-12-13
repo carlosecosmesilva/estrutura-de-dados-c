@@ -5,7 +5,7 @@ typedef struct heap
 {
     int max;
     int pos;
-    int *prioridade;
+    int *h;
 } THeap;
 
 THeap *criarHeap(int max)
@@ -13,7 +13,7 @@ THeap *criarHeap(int max)
     THeap *newHeap = (THeap *)malloc(sizeof(THeap));
     newHeap->max = max;
     newHeap->pos = 0;
-    newHeap->prioridade = (int *)malloc(max * sizeof(int));
+    newHeap->h = (int *)malloc(max * sizeof(int));
     return newHeap;
 }
 
@@ -21,7 +21,7 @@ void inserirHeap(THeap *heap, int prioridade)
 {
     if (heap->pos < heap->max)
     {
-        heap->prioridade[heap->pos] = prioridade;
+        heap->h[heap->pos] = prioridade;
         corrigir(heap, heap->pos);
         heap->pos++;
     }
@@ -44,9 +44,9 @@ void corrigirAcima(THeap *heap, int pos)
     while (pos > 0)
     {
         pai = (pos - 1) / 2;
-        if (heap->prioridade[pai] < heap->prioridade[pos])
+        if (heap->h[pai] < heap->h[pos])
         {
-            trocar(pos, pai, heap->prioridade);
+            trocar(pos, pai, heap->h);
         }
         else
         {
@@ -60,10 +60,10 @@ int removerHeap(THeap *heap)
 {
     if (heap->pos > 0)
     {
-        int topo = heap->prioridade[0];
-        heap->prioridade[0] = heap->prioridade[heap->pos - 1];
+        int topo = heap->h[0];
+        heap->h[0] = heap->h[heap->pos - 1];
         heap->pos--;
-        corrigirAbaixo(heap->prioridade, 0, heap->pos);
+        corrigirAbaixo(heap->h, 0, heap->pos);
         return topo;
     }
     else
@@ -81,9 +81,9 @@ void mostrarInformacoes(THeap *heap, int i)
     }
 
     printf("Indice %d\n", i);
-    printf("Pai do no %d: %d\n", heap->prioridade[i], mostrarPai(heap, i));
-    printf("Filho esquerdo %d: %d\n", heap->prioridade[i], mostrarFilhoEsquerdo(heap, i));
-    printf("Filho direito %d: %d\n", heap->prioridade[i], mostrarFilhoDireito(heap, i));
+    printf("Pai do no %d: %d\n", heap->h[i], mostrarPai(heap, i));
+    printf("Filho esquerdo %d: %d\n", heap->h[i], mostrarFilhoEsquerdo(heap, i));
+    printf("Filho direito %d: %d\n", heap->h[i], mostrarFilhoDireito(heap, i));
 }
 
 int mostrarPai(THeap *heap, int i)
@@ -93,7 +93,7 @@ int mostrarPai(THeap *heap, int i)
         return -1;
     }
 
-    return heap->prioridade[(i - 1) / 2];
+    return heap->h[(i - 1) / 2];
 }
 
 int mostrarFilhoEsquerdo(THeap *heap, int i)
@@ -103,7 +103,7 @@ int mostrarFilhoEsquerdo(THeap *heap, int i)
         return -1;
     }
 
-    return heap->prioridade[(2 * i + 1)];
+    return heap->h[(2 * i + 1)];
 }
 
 int mostrarFilhoDireito(THeap *heap, int i)
@@ -113,7 +113,7 @@ int mostrarFilhoDireito(THeap *heap, int i)
         return -1;
     }
 
-    return heap->prioridade[(2 * i + 2)];
+    return heap->h[(2 * i + 2)];
 }
 
 void corrigirAbaixo(int *prios, int atual, int tam)
@@ -171,6 +171,51 @@ void percorrerVetor(int *v, int n)
     printf("\n");
 }
 
+void descer(THeap **heap, int i)
+{
+    if (i < 0 || i > (*heap)->max || *heap == NULL)
+    {
+        return;
+    }
+
+    int k = 2 * i + 1;
+    int x = (*heap)->h[i];
+
+    while (k < (*heap)->max)
+    {
+        if ((k < ((*heap)->max - 1)) && ((*heap)->h[k] < (*heap)->h[k + 1]))
+        {
+            k++;
+        }
+        if (x < (*heap)->h[k])
+        {
+            (*heap)->h[i] = (*heap)->h[k];
+            i = k;
+            k = 2 * k + 1;
+        }
+        else
+        {
+            break;
+        }
+    }
+    (*heap)->h[i] = x;
+}
+
+void heapSort(THeap **heap)
+{
+    int i, n = (*heap)->max, tmp;
+
+    for (i = (n - 2) / 2; i >= 0; i--)
+    {
+        tmp = (*heap)->h[0];
+        (*heap)->h[0] = (*heap)->h[i] = tmp;
+        (*heap)->h[i] = tmp;
+        (*heap)->max -= 1;
+        descerHeap(heap, 0);
+    }
+    (*heap)->max = n;
+}
+
 int main()
 {
     THeap *heap = NULL;
@@ -190,7 +235,7 @@ int main()
 
     /* mostra o max-heap */
     printf("Max-Heap antes da remocao:\n");
-    percorrerVetor(heap->prioridade, heap->max);
+    percorrerVetor(heap->h, heap->max);
     printf("\n");
 
     /* mostra informacoes sobre um determinado noh */
@@ -203,13 +248,13 @@ int main()
 
     /* mostra o max-heap apos a remocao */
     printf("Max-Heap apos a remocao do elemento de maior prioridade:\n");
-    percorrerVetor(heap->prioridade, heap->max);
+    percorrerVetor(heap->h, heap->max);
     printf("\n");
 
     /* mostra o max-heap apos o algoritmo de ordenacao HeapSort */
     printf("Max-Heap apos o algoritmo de ordenacao HeapSort:\n");
     heapSort(&heap);
-    percorrerVetor(heap->prioridade, heap->max);
+    percorrerVetor(heap->h, heap->max);
     printf("\n");
 
     /* destroi o max-heap */
