@@ -1,285 +1,330 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct viz
+typedef struct vizinho
 {
-    int no_viz;
-    struct viz *prox_viz;
-} TV;
+    int cor;
+    int noVizinho;
+    TVizinho *proxVizinho;
+} TVizinho;
 
 typedef struct grafo
 {
-    int no;
-    struct grafo *prox;
-    TV *prim;
-} TG;
+    int cor;
+    int noGrafo;
+    TGrafo *proxGrafo;
+    TVizinho *primViz;
+} TGrafo;
 
-TG *TG_inicializa()
+TGrafo *inicializarGrafo()
 {
     return NULL;
 }
 
-void TG_imprime(TG *g)
-{
-    while (g)
-    {
-        printf("Vizinhos do No %d:\n", g->no);
-        TV *v = g->prim;
-        while (v)
-        {
-            printf("%d ", v->no_viz);
-            v = v->prox_viz;
-        }
-        printf("\n");
-        g = g->prox;
-    }
-}
-
-void TG_imp_rec(TG *g)
+void imprimir(TGrafo *g)
 {
     if (g)
     {
-        printf("%d:\n", g->no);
-        TV *v = g->prim;
+        printf("%d:\n", g->noGrafo);
+        TVizinho *v = g->primViz;
         while (v)
         {
-            printf("%d ", v->no_viz);
-            v = v->prox_viz;
+            printf("%d ", v->noVizinho);
+            v = v->proxVizinho;
         }
-        TG_imp_rec(g->prox);
+        imprimir(g->proxGrafo);
     }
 }
 
-void TG_libera_viz(TV *v)
-{
-    while (v)
-    {
-        TV *temp = v;
-        v = v->prox_viz;
-        free(temp);
-    }
-}
-
-void TG_libera_viz_rec(TV *v)
+void liberarVizinho(TVizinho *v)
 {
     if (!v)
         return;
-    TG_libera_viz_rec(v->prox_viz);
+    liberarVizinho(v->proxVizinho);
     free(v);
 }
 
-void TG_libera(TG *g)
-{
-    while (g)
-    {
-        TG_libera_viz(g->prim);
-        TG *temp = g;
-        g = g->prox;
-        free(temp);
-    }
-}
-
-void TG_libera_rec(TG *g)
+void liberarGrafo(TGrafo *g)
 {
     if (g)
+        liberarVizinho(g->primViz);
+    liberarGrafo(g->proxGrafo);
+    free(g);
+}
+
+TGrafo *buscarNo(TGrafo *g, int x)
+{
+    if ((!g) || (g->noGrafo == x))
     {
-        TG_libera_viz(g->prim);
-        TG_libera_rec(g->prox);
-        free(g);
-    }
-}
-
-TG *TG_busca_no(TG *g, int x)
-{
-    if ((!g) || (g->no == x))
         return g;
-    return (TG_busca_no(g->prox, x));
+    }
+    return (buscarNo(g->proxGrafo, x));
 }
 
-TV *TG_busca_aresta(TG *g, int no1, int no2)
+TGrafo *buscarAresta(TGrafo *g, int primNo, int segNo)
 {
-    TG *p1 = TG_busca_no(g, no1), *p2 = TG_busca_no(g, no2);
+    TGrafo *p1 = buscarNo(g, primNo);
+    TGrafo *p2 = buscarNo(g, segNo);
+
     if ((!p1) || (!p2))
+    {
         return NULL;
-    TV *resp = p1->prim;
-    while ((resp) && (resp->no_viz != no2))
-        resp = resp->prox_viz;
-    return resp;
+    }
+
+    TVizinho *aresta = p1->primViz;
+
+    while ((aresta) && (aresta->noVizinho != segNo))
+    {
+        aresta = aresta->proxVizinho;
+    }
+
+    return aresta;
 }
 
-TG *TG_ins_no(TG *g, int x)
+TGrafo *inserirNo(TGrafo *g, int x)
 {
-    TG *p = TG_busca_no(g, x);
+    TGrafo *p = buscarNo(g, x);
     if (!p)
     {
-        p = (TG *)malloc(sizeof(TG));
-        p->no = x;
-        p->prox = g;
-        p->prim = NULL;
+        p = (TGrafo *)malloc(sizeof(TGrafo));
+        p->noGrafo = x;
+        p->proxGrafo = g;
+        p->primViz = NULL;
         g = p;
     }
     return g;
 }
 
-void TG_ins_um_sentido(TG *g, int no1, int no2)
+void inserirUmSentido(TGrafo *g, int primNo, int segNo)
 {
-    TG *p = TG_busca_no(g, no1);
+    TGrafo *p = buscarNo(g, primNo);
     if (!p)
+    {
         return;
-    TV *nova = (TV *)malloc(sizeof(TV));
-    nova->no_viz = no2;
-    nova->prox_viz = p->prim;
-    p->prim = nova;
+    }
+    TVizinho *novo = (TVizinho *)malloc(sizeof(TVizinho));
+    novo->noVizinho = segNo;
+    novo->proxVizinho = p->primViz;
+    p->primViz = novo;
 }
 
-void TG_ins_aresta(TG *g, int no1, int no2)
+void inserirAresta(TGrafo *g, int primNo, int segNo)
 {
-    TV *v = TG_busca_aresta(g, no1, no2);
+    TVizinho *v = buscarAresta(g, primNo, segNo);
     if (v)
+    {
         return;
-    TG_ins_um_sentido(g, no1, no2);
-    TG_ins_um_sentido(g, no2, no1);
+    }
+    inserirUmSentido(g, primNo, segNo);
+    inserirUmSentido(g, segNo, primNo);
 }
 
-void TG_retira_um_sentido(TG *g, int no1, int no2)
+void retirarUmSentido(TGrafo *g, int primNo, int segNo)
 {
-    TG *p = TG_busca_no(g, no1);
+    TGrafo *p = buscarNo(g, primNo);
     if (!p)
+    {
         return;
-    TV *ant = NULL, *atual = p->prim;
-    while ((atual) && (atual->no_viz != no2))
+    }
+    TVizinho *ant = NULL;
+    TVizinho *atual = p->primViz;
+    while ((atual) && (atual->noVizinho != segNo))
     {
         ant = atual;
-        atual = atual->prox_viz;
+        atual = atual->proxVizinho;
     }
     if (!ant)
-        p->prim = atual->prox_viz;
+    {
+        p->primViz = atual->proxVizinho;
+    }
     else
-        ant->prox_viz = atual->prox_viz;
+    {
+        ant->proxVizinho = atual->proxVizinho;
+    }
     free(atual);
 }
 
-void TG_retira_aresta(TG *g, int no1, int no2)
+void retirarAresta(TGrafo *g, int primNo, int segNo)
 {
-    TV *v = TG_busca_aresta(g, no1, no2);
+    TVizinho *v = buscarAresta(g, primNo, segNo);
     if (!v)
+    {
         return;
-    TG_retira_um_sentido(g, no1, no2);
-    TG_retira_um_sentido(g, no2, no1);
+    }
+    retirarUmSentido(g, primNo, segNo);
+    retirarUmSentido(g, primNo, segNo);
 }
 
-TG *TG_retira_no(TG *g, int no)
+TGrafo *retiraNo(TGrafo *g, int no)
 {
-    TG *p = g, *ant = NULL;
-    while ((p) && (p->no != no))
+    TGrafo *p = g;
+    TGrafo *ant = NULL;
+
+    while ((p) && (p->noGrafo != no))
     {
         ant = p;
-        p = p->prox;
+        p = p->proxGrafo;
     }
     if (!p)
+    {
         return g;
-    while (p->prim)
-        TG_retira_aresta(g, no, p->prim->no_viz);
+    }
+    while (p->primViz)
+    {
+        retirarAresta(g, no, p->primViz->noVizinho);
+    }
     if (!ant)
-        g = g->prox;
+    {
+        g = g->proxGrafo;
+    }
     else
-        ant->prox = p->prox;
+    {
+        ant->proxGrafo = p->proxGrafo;
+    }
     free(p);
     return g;
 }
 
-// Q1
-int nn(TG *g)
+int verificarQtdDeNos(TGrafo *g)
 {
     if (!g)
+    {
         return 0;
-    if (g->prox)
-        return 1 + nn(g->prox);
+    }
+    if (g->proxGrafo)
+    {
+        return 1 + verificarQtdDeNos(g->proxGrafo);
+    }
     return 1;
 }
 
-// Q2
-int nv(TG *g)
+int verificarQtdDeVertices(TGrafo *g)
 {
     if (!g)
+    {
         return 0;
-    int qtdV = 0;
+    }
+    int qtdVertices = 0;
     while (g)
     {
-        if (g->prim)
+        if (g->primViz)
         {
-            TV *aux = g->prim;
+            TVizinho *aux = g->primViz;
             while (aux)
             {
-                qtdV++;
-                aux = aux->prox_viz;
+                qtdVertices++;
+                aux = aux->proxVizinho;
             }
         }
-        g = g->prox;
+        g = g->proxGrafo;
     }
-
-    return qtdV;
+    return qtdVertices;
 }
 
-// Q3
-int testek(TG *g, int k)
+int verificarGrauDeNos(TGrafo *g, int x)
 {
     if (!g)
+    {
         return 0;
+    }
     while (g)
     {
         int qtd = 0;
-        if (g->prim)
+        if (g->primViz)
         {
-            TV *v = g->prim;
+            TVizinho *v = g->primViz;
             while (v)
             {
                 qtd++;
-                v = v->prox_viz;
+                v = v->proxVizinho;
             }
         }
-        if (qtd != k)
+        if (qtd != x)
+        {
             return 0;
-        g = g->prox;
+        }
+        g = g->proxGrafo;
     }
     return 1;
 }
 
-// Q4
-int iguais(TG *g1, TG *g2)
+int verificarGrafosIguais(TGrafo *primGraf, TGrafo *segGrafo)
 {
-    if (!g1 && !g2)
-        return 1;
-    if (g1->no == g2->no)
+    if (!primGraf && !segGrafo)
     {
-        TV *v1 = g1->prim, *v2 = g2->prim;
-        while (v1 || v2)
+        return 1;
+    }
+    else if (primGraf->noGrafo == segGrafo->noGrafo)
+    {
+        TVizinho *primViz = primGraf->primViz;
+        TVizinho *segViz = segGrafo->primViz;
+        while (primViz || segViz)
         {
-            if (!v1 || !v2)
-                return 0;
-            if (v1->no_viz == v2->no_viz)
+            if (!primViz || segViz)
             {
-                v1 = v1->prox_viz;
-                v2 = v2->prox_viz;
+                return 0;
+            }
+            else if (primViz->noVizinho == segViz->noVizinho)
+            {
+                primViz = primViz->proxVizinho;
+                segViz = segViz->proxVizinho;
             }
             else
+            {
                 return 0;
+            }
         }
-        if (!g1->prox && !g2->prox)
+        if (!primGraf->proxGrafo && !segGrafo->proxGrafo)
+        {
             return 1;
+        }
         else
         {
-            g1 = g1->prox;
-            g2 = g2->prox;
+            primGraf = primGraf->proxGrafo;
+            segGrafo = segGrafo->proxGrafo;
         }
     }
     else
+    {
         return 0;
+    }
 
     return 1;
 }
 
-//Q5
-int nao_tem_mesma_cor(TG *g) {
-    
+int verificarSeCorIgual(TGrafo *g)
+{
+    int resultado = 1;
+    TGrafo *aux = g;
+    while (aux != NULL)
+    {
+        TVizinho *v = aux->primViz;
+        while (v != NULL)
+        {
+            if (v->cor == aux->cor)
+            {
+                resultado = 0;
+            }
+            v->proxVizinho;
+        }
+        aux = aux->proxGrafo;
+    }
+
+    return resultado;
+}
+
+int main()
+{
+    TGrafo *grafoTeste = inicializa();
+    grafoTeste = insere_vertice(grafoTeste, 10, 5);
+    grafoTeste = insere_vertice(grafoTeste, 12, 5);
+    grafoTeste = insere_vertice(grafoTeste, 17, 7);
+    grafoTeste = insere_vertice(grafoTeste, 1, 8);
+    insere_aresta(grafoTeste, 10, 12, 5, 5);
+
+    imprime(grafoTeste);
+    int teste = nao_tem_mesma_cor(grafoTeste);
+
+    printf("%d \n", teste);
+    return 0;
 }
