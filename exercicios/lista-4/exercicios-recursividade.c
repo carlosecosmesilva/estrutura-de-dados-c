@@ -292,7 +292,6 @@ int verificarGrafosIguais(TGrafo *primGraf, TGrafo *segGrafo)
     return 1;
 }
 
-<<<<<<< HEAD
 int verificarSeCorIgual(TGrafo *g)
 {
     int resultado = 1;
@@ -327,19 +326,4 @@ int main()
     int teste = nao_tem_mesma_cor(grafoTeste);
 
     printf("%d \n", teste);
-=======
-//Q5
-int nao_tem_mesma_cor(TG *g)
-{
-    if (!g || !g->prox_no)
-        return 2;
-    
-    int verif = nao_tem_mesma_cor(g->prox_no);
-    if (verif==1)
-        return 1;
-    if (g->cor != g->prox_no->cor)
-        return 1;
->>>>>>> e842a2c070d4f88003743afbbca1dde872f7547d
-    return 0;
 }
-
