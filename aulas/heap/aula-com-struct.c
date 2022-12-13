@@ -8,27 +8,70 @@ typedef struct heap
     int *h;
 } THeap;
 
-THeap *criarHeap(int max)
+THeap *criarHeap(THeap **heap)
 {
     THeap *newHeap = (THeap *)malloc(sizeof(THeap));
-    newHeap->max = max;
-    newHeap->pos = 0;
-    newHeap->h = (int *)malloc(max * sizeof(int));
-    return newHeap;
+    if (newHeap == NULL)
+    {
+        *heap = NULL;
+    }
+    newHeap->h = NULL;
+    newHeap->max = 0;
+
+    *heap = newHeap;
 }
 
-void inserirHeap(THeap *heap, int prioridade)
+int *inicializarVetor(int n)
 {
-    if (heap->pos < heap->max)
+    int *novoVetor, i;
+
+    novoVetor = (int *)malloc(n * sizeof(int));
+    if (novoVetor == NULL)
     {
-        heap->h[heap->pos] = prioridade;
-        corrigir(heap, heap->pos);
-        heap->pos++;
+        return NULL;
+    }
+
+    return novoVetor;
+}
+
+void inserirHeap(THeap **heap, int k)
+{
+    if (*heap == NULL)
+    {
+        criarHeap(heap);
+    }
+    else if ((*heap)->max == 0)
+    {
+        (*heap)->max = 1;
+        (*heap)->h = inicializarVetor(1);
+        (*heap)->h[0] = k;
     }
     else
     {
-        printf("Heap Cheio!");
+        (*heap)->max += 1;
+        (*heap)->h = realocarVetor((*heap)->h, (*heap)->max);
+        (*heap)->h[(*heap)->max - 1] = k;
+        subir(heap, (*heap)->max - 1);
     }
+}
+
+void subir(THeap **heap, int i)
+{
+    if (i < 0 || i > (*heap)->max || *heap == NULL)
+    {
+        return;
+    }
+
+    int j = (i - 1) / 2;
+    int x = (*heap)->h[i];
+
+    while (i > 0 && (*heap)->h[j] < x)
+    {
+        (*heap)->h[i] = (*heap)->h[j];
+        i = j;
+        j = (j - 1) / 2;
+    }
+    (*heap)->h[i] = x;
 }
 
 void trocar(int a, int b, int *v)
@@ -56,21 +99,12 @@ void corrigirAcima(THeap *heap, int pos)
     }
 }
 
-int removerHeap(THeap *heap)
+int removerHeap(THeap **heap)
 {
-    if (heap->pos > 0)
-    {
-        int topo = heap->h[0];
-        heap->h[0] = heap->h[heap->pos - 1];
-        heap->pos--;
-        corrigirAbaixo(heap->h, 0, heap->pos);
-        return topo;
-    }
-    else
-    {
-        printf("Heap VAZIO!");
-        return -1;
-    }
+    (*heap)->h[0] = (*heap)->h[(*heap)->max - 1];
+    (*heap)->max -= 1;
+    (*heap)->h = realocarVetor((*heap)->h, (*heap)->max);
+    descer(heap, 0);
 }
 void mostrarInformacoes(THeap *heap, int i)
 {
@@ -155,6 +189,23 @@ void destruirHeap(THeap **heap)
         free(*heap);
         *heap = NULL;
     }
+}
+
+int *realocarVetor(int *v, int n)
+{
+    if (v == NULL || n < 0)
+    {
+        return v;
+    }
+
+    int *tmp;
+    tmp = (int *)realloc(v, n * sizeof(int));
+    if (tmp == NULL)
+    {
+        return v;
+    }
+
+    return tmp;
 }
 
 void percorrerVetor(int *v, int n)
