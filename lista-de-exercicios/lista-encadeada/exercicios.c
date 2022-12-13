@@ -122,7 +122,7 @@ TLista *removerDaLista(TLista *inicio, int remover)
     {
         if (p->info != remover)
         {
-            nova = insere_fim(nova, p->info);
+            nova = insere(nova, p->info);
         }
     }
     p = inicio;
@@ -175,23 +175,33 @@ TLista *ordenar(TLista *li)
 
 TLista *merge(TLista *l1, TLista *l2)
 {
-    TLista *nova;
+    TLista *novaLista;
     TLista *p;
-    nova = l1;
-    for (p = l2; p->prox; p = p->prox)
-    {
-        nova = insere_fim(nova, p->info);
-    }
-    nova = insere_fim(nova, p->info);
-    nova = ordenar(nova);
-    p = l2;
+    TLista *aux;
+    int podeInserir;
+    novaLista = cria_lista();
 
-    while (p != NULL)
+    for (p = l1; p != NULL; p->prox)
     {
-        l2 = exclui_inicio(l2);
-        p = l2;
+        podeInserir = 1;
+        for (aux = l2; aux != NULL; aux->prox)
+        {
+            if (p->info == aux->info)
+            {
+                podeInserir = 0;
+                break;
+            }
+        }
+        if (podeInserir)
+        {
+            insere(novaLista, p->info);
+        }
     }
-    return nova;
+    for (aux = l2; aux != NULL; aux = aux->prox)
+    {
+        insere(novaLista, aux->info);
+    }
+    return novaLista;
 }
 
 TLista *insere_fim_lista(TLista *li, TLista *l2)

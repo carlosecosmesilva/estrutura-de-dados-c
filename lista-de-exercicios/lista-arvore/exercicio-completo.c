@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct lista
+{
+    int info;
+    TLista *prox;
+} TLista;
+
 typedef struct arvore
 {
     int info;
@@ -107,8 +113,6 @@ int verificarSeArvoreZigZag(TAB *a)
     }
 }
 
-// Falta testar
-
 TAB *retiraPares(TAB *arv)
 {
     if (arv != NULL)
@@ -139,7 +143,67 @@ TAB *retiraPares(TAB *arv)
     }
 }
 
-main()
+TLista *ancestrais(TAB *no, int elem)
+{
+    if (!busca(no, elem))
+        return NULL;
+    TLista *ListaAnc = cria_lista();
+    if (no)
+    {
+        if (elem < no->info)
+        {
+            ListaAnc = insere_fim(ListaAnc, no->info);
+            ListaAnc->prox = ancestrais(no->esq, elem);
+        }
+
+        else if (elem > no->info)
+        {
+            ListaAnc = insere_fim(ListaAnc, no->info);
+            ListaAnc->prox = ancestrais(no->dir, elem);
+        }
+
+        else if (elem == no->info)
+        {
+            return ListaAnc;
+        }
+    }
+    return ListaAnc;
+}
+
+TLista *menores(TAB *no, int n)
+{
+
+    TLista *ListaMen = cria_lista();
+
+    if (no)
+    {
+        if (no->info < n)
+        {
+            ListaMen->prox = insere_fim(ListaMen, no->info);
+        }
+        else
+        {
+            ListaMen->prox = insere_fim(ListaMen, -1);
+        }
+
+        if (no->dir)
+        {
+            ListaMen->prox = menores(no->dir, n);
+        }
+        else if (ListaMen->prox && no->esq)
+        {
+            ListaMen->prox->prox = menores(no->esq, n);
+        }
+        else if (no->esq)
+        {
+            ListaMen->prox = menores(no->esq, n);
+        }
+
+        return ListaMen;
+    }
+}
+
+int main()
 {
     TAB *arvore1;
     arvore1 = insere(2);
