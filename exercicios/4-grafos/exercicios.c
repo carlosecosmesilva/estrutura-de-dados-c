@@ -315,15 +315,15 @@ int verificarSeCorIgual(TGrafo *g)
 
 int main()
 {
-    TGrafo *grafoTeste = inicializa();
-    grafoTeste = insere_vertice(grafoTeste, 10, 5);
-    grafoTeste = insere_vertice(grafoTeste, 12, 5);
-    grafoTeste = insere_vertice(grafoTeste, 17, 7);
-    grafoTeste = insere_vertice(grafoTeste, 1, 8);
-    insere_aresta(grafoTeste, 10, 12, 5, 5);
+    TGrafo *grafoTeste = inicializarGrafo();
+    grafoTeste = inserirUmSentido(grafoTeste, 10, 5);
+    grafoTeste = inserirUmSentido(grafoTeste, 12, 5);
+    grafoTeste = inserirUmSentido(grafoTeste, 17, 7);
+    grafoTeste = inserirUmSentido(grafoTeste, 1, 8);
+    inserirAresta(grafoTeste, 10, 12, 5, 5);
 
-    imprime(grafoTeste);
-    int teste = nao_tem_mesma_cor(grafoTeste);
+    imprimir(grafoTeste);
+    int teste = verificarGrafosIguais(grafoTeste);
 
     printf("%d \n", teste);
 }
