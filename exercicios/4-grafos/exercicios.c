@@ -316,11 +316,11 @@ int verificarSeCorIgual(TGrafo *g)
 int main()
 {
     TGrafo *grafoTeste = inicializarGrafo();
-    grafoTeste = inserirUmSentido(grafoTeste, 10, 5);
-    grafoTeste = inserirUmSentido(grafoTeste, 12, 5);
-    grafoTeste = inserirUmSentido(grafoTeste, 17, 7);
-    grafoTeste = inserirUmSentido(grafoTeste, 1, 8);
-    inserirAresta(grafoTeste, 10, 12, 5, 5);
+    grafoTeste = inserirNo(grafoTeste, 5);
+    grafoTeste = inserirNo(grafoTeste, 12);
+    grafoTeste = inserirNo(grafoTeste, 17);
+    grafoTeste = inserirNo(grafoTeste, 1);
+    inserirAresta(grafoTeste, 10, 12);
 
     imprimir(grafoTeste);
     int teste = verificarGrafosIguais(grafoTeste);
