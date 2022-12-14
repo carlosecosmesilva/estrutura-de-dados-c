@@ -4,27 +4,27 @@
 
 #### Listas Encadeadas
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/listas)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-encadeada)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/1-lista-encadeada)
 
 #### Filas
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/filas)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-fila)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/2-fila-pilha)
 
 #### Pilhas
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/pilhas)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-pilha)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/2-fila-pilha)
 
 #### Arvores
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/arvores)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-arvore)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/3-arvore)
 
 #### Grafos
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/grafos)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-grafos)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/4-grafos)
 
 #### Hash
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/hash)
-- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/lista-hash)
+- [Exercícios](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/exercicios/5-hash)
 #### Heap
 - [Aula](https://github.com/carlosecosmesilva/estrutura-de-dados-c/tree/master/aulas/heap)
 - Falta adicionar
