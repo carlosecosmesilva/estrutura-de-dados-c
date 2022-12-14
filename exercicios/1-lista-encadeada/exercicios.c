@@ -7,12 +7,12 @@ typedef struct lista
     TLista *prox;
 } TLista;
 
-TLista *cria_lista()
+TLista *criar_lista()
 {
     return NULL;
 }
 
-TLista *insere(TLista *inicio, int info)
+TLista *inserir(TLista *inicio, int info)
 {
     TLista *novo = (TLista *)malloc(sizeof(TLista));
     novo->prox = inicio;
@@ -20,7 +20,7 @@ TLista *insere(TLista *inicio, int info)
     return novo;
 }
 
-TLista insere_fim(TLista *li, int i)
+TLista inserir_fim(TLista *li, int i)
 {
     TLista *novo = (TLista *)malloc(sizeof(TLista));
     novo->info = i;
@@ -50,7 +50,7 @@ void imprimirLista(TLista *li)
     }
 }
 
-TLista *retira(TLista *inicio)
+TLista *retirar(TLista *inicio)
 {
     TLista *aux;
     aux = inicio;
@@ -63,24 +63,24 @@ TLista *inverterLista(TLista *inicio)
 {
     int aux;
     TLista *p;
-    TLista *novaLista = cria_lista();
+    TLista *novaLista = criar_lista();
 
     for (p = inicio; p != NULL; p->prox)
     {
-        novaLista = insere(novaLista, p->info);
+        novaLista = inserir(novaLista, p->info);
     }
     p = inicio;
 
     while (p != NULL)
     {
-        inicio = retira(inicio);
+        inicio = retirar(inicio);
         p = inicio;
     }
 
     return novaLista;
 }
 
-TLista *exclui(TLista *li, int elem)
+TLista *excluir(TLista *li, int elem)
 {
     TLista *p;
     TLista *c;
@@ -117,18 +117,18 @@ TLista *exclui(TLista *li, int elem)
 TLista *removerDaLista(TLista *inicio, int remover)
 {
     TLista *p;
-    TLista *nova = cria_lista();
+    TLista *nova = criar_lista();
     for (p = inicio; p != NULL; p = p->prox)
     {
         if (p->info != remover)
         {
-            nova = insere(nova, p->info);
+            nova = inserir(nova, p->info);
         }
     }
     p = inicio;
     while (p != NULL)
     {
-        inicio = retira(inicio);
+        inicio = retirar(inicio);
         p = inicio;
     }
     return nova;
@@ -179,7 +179,7 @@ TLista *merge(TLista *l1, TLista *l2)
     TLista *p;
     TLista *aux;
     int podeInserir;
-    novaLista = cria_lista();
+    novaLista = criar_lista();
 
     for (p = l1; p != NULL; p->prox)
     {
@@ -194,12 +194,12 @@ TLista *merge(TLista *l1, TLista *l2)
         }
         if (podeInserir)
         {
-            insere(novaLista, p->info);
+            inserir(novaLista, p->info);
         }
     }
     for (aux = l2; aux != NULL; aux = aux->prox)
     {
-        insere(novaLista, aux->info);
+        inserir(novaLista, aux->info);
     }
     return novaLista;
 }

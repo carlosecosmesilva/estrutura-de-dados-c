@@ -54,3 +54,9 @@ void ret_como_fila_por_pilha(TPilha *pilha)
         free(auxPilha);
     }
 }
+
+int main()
+{
+    
+    return 0;
+}

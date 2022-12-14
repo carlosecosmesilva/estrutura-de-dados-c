@@ -29,7 +29,7 @@ void imprime_lista(TLista *li)
     printf("--------------------------------------------\n");
 }
 
-TLista *exclui(TLista *li, int elem)
+TLista *excluir(TLista *li, int elem)
 {
     TLista *p;
     TLista *c;
@@ -75,7 +75,7 @@ int main()
 
     imprime_lista(li);
 
-    li = exclui(li, 10);
+    li = excluir(li, 10);
 
     imprime_lista(li);
 

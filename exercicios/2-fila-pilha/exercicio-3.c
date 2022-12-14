@@ -19,7 +19,7 @@ TPilha *criarPilha()
     return pilha;
 }
 
-void push(TPilha *p, char elem) // Empilhar
+void push(TPilha *p, int elem) // Empilhar
 {
     TLista *novo = (TLista *)malloc(sizeof(TLista));
     novo->info = elem;
@@ -70,6 +70,23 @@ int min(TPilha *p) {
 
 int main()
 {
-
+    TPilha *novaPilha;
+    criarPilha(novaPilha);
+    push(novaPilha, 10);
+    push(novaPilha, 5);
+    push(novaPilha, 6);
+    push(novaPilha, 13);
+    push(novaPilha, 18);
+    printf("Imprimindo pilha: \n");
+    print(novaPilha);
+    printf("\n");
+    printf("Menor valor da pilha: \n");
+    min(novaPilha);
+    printf("\n");
+    printf("Removendo pilha: \n");
+    pop(novaPilha);
+    printf("\n");
+    printf("Imprimindo pilha vazia: \n");
+    print(novaPilha);
     return 0;
 }
